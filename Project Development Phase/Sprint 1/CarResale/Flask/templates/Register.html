@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Register New User</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="{{ url_for('static', filename='vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="{{ url_for('static', filename='css/sb-admin-2.min.css') }}" rel="stylesheet">
+
+</head>
+
+<body id="page-top">
+    <section class="pb-4">
+        <div class="bg-white border rounded-5">
+          
+          <section class="w-100 px-4 py-5 vh-100 bg-image" style="background-image: url('{{ url_for("static", filename="car.png") }}'); background-size: cover; background-repeat: no-repeat; background-position: center center;  border-radius: .5rem .5rem 0 0;">
+           
+            <div class="mask d-flex align-items-center h-100">
+              <div class="container h-100">
+                <div class="row d-flex justify-content-center align-items-center h-100">
+                  <div class="col-12 col-md-9 col-lg-7 col-xl-7">
+                    <div class="card" style="border-radius: 15px;">
+                      <div class="card-body p-5">
+                        <h2 class="text-uppercase text-center mb-5">Create an account</h2>
+      
+                        <form>
+      
+                          <div class="form-outline mb-4">
+                            <input type="text" id="form3Example1cg" class="form-control form-control-lg">
+                            <label class="form-label" for="form3Example1cg" style="margin-left: 0px;">Your Name</label>
+                          <div class="form-notch"><div class="form-notch-leading" style="width: 9px;"></div><div class="form-notch-middle" style="width: 71.2px;"></div><div class="form-notch-trailing"></div></div></div>
+      
+                          <div class="form-outline mb-4">
+                            <input type="email" id="form3Example3cg" class="form-control form-control-lg">
+                            <label class="form-label" for="form3Example3cg" style="margin-left: 0px;">Your Email</label>
+                          <div class="form-notch"><div class="form-notch-leading" style="width: 9px;"></div><div class="form-notch-middle" style="width: 68.8px;"></div><div class="form-notch-trailing"></div></div></div>
+      
+                          <div class="form-outline mb-4">
+                            <input type="password" id="form3Example4cg" class="form-control form-control-lg">
+                            <label class="form-label" for="form3Example4cg" style="margin-left: 0px;">Password</label>
+                          <div class="form-notch"><div class="form-notch-leading" style="width: 9px;"></div><div class="form-notch-middle" style="width: 64px;"></div><div class="form-notch-trailing"></div></div></div>
+      
+                          <div class="form-outline mb-4">
+                            <input type="password" id="form3Example4cdg" class="form-control form-control-lg">
+                            <label class="form-label" for="form3Example4cdg" style="margin-left: 0px;">Repeat your password</label>
+                          <div class="form-notch"><div class="form-notch-leading" style="width: 9px;"></div><div class="form-notch-middle" style="width: 134.4px;"></div><div class="form-notch-trailing"></div></div></div>
+      
+                          <div class="form-check d-flex justify-content-center mb-5">
+                            <input class="form-check-input me-2" type="checkbox" value="" id="form2Example3cg">
+                            <label class="form-check-label" for="form2Example3g">
+                              I agree all statements in <a href="/register" class="text-body"><u>Terms of service</u></a>
+                            </label>
+                          </div>
+      
+                          <div class="d-flex justify-content-center">
+                            <button type="button" class="btn btn-success btn-block btn-lg text-body">Register</button>
+                          </div>
+      
+                          <p class="text-center text-muted mt-5 mb-0">Have already an account? <a href="/login" class="fw-bold text-body"><u>Login here</u></a></p>
+      
+                        </form>
+      
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>              
+          
+          <div class="p-4 text-center border-top mobile-hidden">
+            <a class="btn btn-link px-3" data-mdb-toggle="collapse" href="#example7" role="button" aria-expanded="false" aria-controls="example7" data-ripple-color="hsl(0, 0%, 67%)">
+              <i class="fas fa-code me-md-2"></i>
+              <span class="d-none d-md-inline-block">
+                Show code
+              </span>
+            </a>            
+            
+              <a class="btn btn-link px-3" data-ripple-color="hsl(0, 0%, 67%)" style="">
+                <i class="fas fa-file-code me-md-2 pe-none"></i>
+                <span class="d-none d-md-inline-block export-to-snippet pe-none">
+                  Edit in sandbox
+                </span>
+              </a>
+            
+          </div>         
+          
+        </div>
+      </section>
+</body>
+</html>
