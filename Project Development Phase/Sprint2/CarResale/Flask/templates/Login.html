@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Car Resale value prediction app">
+    <meta name="author" content="HKG">
+    <meta name="google-signin-client_id" content="698677140106-707j7ul24q25q8588iu0hvlji69tv21l.apps.googleusercontent.com">
+
+    <title>Login</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="static/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="static/css/sb-admin-2.min.css" rel="stylesheet">
+</head>
+
+<body id="page-top">
+    <section class="vh-100" style="background-color: #508bfc;">
+        <div class="container py-5 h-100">
+          <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+              <div class="card shadow-2-strong" style="border-radius: 1rem;">
+                <div class="card-body p-5 text-center">
+      
+                  <h3 class="mb-5">Sign in</h3>
+                  
+                  <form id="frmlogin" name="frmlogin" class="user">
+      
+                  <div class="form-outline mb-4">
+                    <input type="email" id="useremail" name="useremail" class="form-control form-control-lg" />
+                    <label class="form-label" for="useremail">Email</label>
+                  </div>
+      
+                  <div class="form-outline mb-4">
+                    <input type="password" id="userpassword" name="userpassword" class="form-control form-control-lg" />
+                    <label class="form-label" for="userpassword">Password</label>
+                  </div>
+      
+                  <!-- Checkbox -->
+                  <div class="form-check d-flex justify-content-start mb-4">
+                    <input class="form-check-input" type="checkbox" value="" id="remember" name="remember" />
+                    <label class="form-check-label" for="remember"> Remember password </label>
+                  </div>
+      
+                  <button class="btn btn-primary btn-lg btn-block" id="btnlogin" name="btnlogin" type="button">Login</button>
+      
+                  <hr class="my-4">
+      
+                  <button class="btn btn-lg btn-block btn-primary" style="background-color: hsl(7, 71%, 55%);"
+                    type="submit"><i class="fab fa-google me-2"></i> Sign in with google</button>
+                    <!-- <div class="g-signin2" data-onsuccess="onSignIn"></div>   -->
+                  <button class="btn btn-lg btn-block btn-primary mb-2" style="background-color: #3b5998;"
+                    type="submit"><i class="fab fa-facebook-f me-2"></i>Sign in with facebook</button>
+                  </form>
+                  
+                  <div class="h5 mb-0 font-weight-bold text-gray-800"><h2 id="result" name="result">{{ypred}}</h2></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+	    <!-- Bootstrap core JavaScript-->
+    <script src="static/vendor/jquery/jquery.min.js"></script>
+    <script src="static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="static/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="static/js/sb-admin-2.min.js"></script>
+      
+    <!-- Custom scripts for all pages-->    
+    <script src="https://apis.google.com/js/platform.js" async defer></script> 
+    <script lang="javascript">
+       
+      $(function(){
+
+        $('button#btnlogin').click(function(){
+          console.log($('form#frmlogin').serialize());
+          $.ajax({
+            type: 'POST',
+            url: '/loginuser',
+            data: $('form#frmlogin').serialize(),
+            success: function(msg)
+                  {$('#result').empty().append(msg.result); 
+                  if (msg.result=="Welcome")
+                    window.location.href = "/";},
+            error: function() {alert('Login Failed');}
+          });
+        }); 
+      });
+      
+      function onSignIn(googleUser) {
+        var profile = googleUser.getBasicProfile();
+        console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+        console.log('Name: ' + profile.getName());
+        console.log('Image URL: ' + profile.getImageUrl());
+        console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+      }
+    </script>
+</body>
+</html>

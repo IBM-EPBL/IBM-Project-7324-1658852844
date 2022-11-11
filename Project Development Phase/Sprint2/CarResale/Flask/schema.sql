@@ -1,0 +1,25 @@
+DROP TABLE IF EXISTS users;
+
+CREATE TABLE users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    username TEXT NOT NULL,
+    email TEXT NOT NULL,
+    userpassword TEXT NOT NULL
+);
+
+DROP TABLE IF EXISTS resalequery;
+
+CREATE TABLE resalequery (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    regyear TEXT NOT NULL,
+    regmonth TEXT NOT NULL,    
+    kms  TEXT NOT NULL,
+    gearbox  TEXT NOT NULL,
+    damage  TEXT NOT NULL,
+    model  TEXT NOT NULL,
+    brand  TEXT NOT NULL,
+    fuelType  TEXT NOT NULL, 
+    vehicletype  TEXT NOT NULL
+);
