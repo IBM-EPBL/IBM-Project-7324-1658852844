@@ -12,4 +12,4 @@ Flask-Compress==1.13
 Flask-Login==0.6.2
 Flask-SQLAlchemy==3.0.2
 Flask-WTF==1.0.1
-sqlite3
+db-sqlite3==0.0.1
