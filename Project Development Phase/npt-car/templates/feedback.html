@@ -1,0 +1,102 @@
+{% extends "bootstrap/base.html" %}
+<link rel="icon" type="image/x-icon" href="{{url_for('.static', filename='img/favicon.ico')}}">
+{% block title %}
+User Feedback Comments
+{% endblock %}
+
+{% block styles %}
+{{super()}}
+<link rel="stylesheet" href="{{url_for('.static', filename='dashboard.css')}}"> 
+{% endblock %}
+
+{% block content %}
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="{{ url_for('dashboard') }}">Car Resale Value Calculator</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="{{ url_for('predict') }}">Predict</a></li>
+            <li><a href="{{ url_for('feedbacklist') }}">Feedback</a></li> 
+            <li><a href="{{ url_for('logout') }}">Log Out</a></li>
+          </ul>
+          <form class="navbar-form navbar-right">
+            <input type="text" class="form-control" placeholder="Search...">
+          </form>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+          <ul class="list-group">
+            <li class="list-group-item list-group-item-info"><a href="#">Project Overview <span class="sr-only">(current)</span></a></li>
+            <li class="list-group-item list-group-item-success">Industry Mentor :  Prof Swetha</li>
+            <li class="list-group-item list-group-item-success">Faculty Mentor : Faculty Mentor</li> 
+          </ul>
+          <ul class="list-group">
+            <li class="list-group-item list-group-item-danger"><bold>Team</bold></li>
+            <li class="list-group-item list-group-item-success">Jeevana</li>
+            <li class="list-group-item list-group-item-success">Karthik Sriram</li>
+            <li class="list-group-item list-group-item-success">Jayapriya</li>
+            <li class="list-group-item list-group-item-success">Karthik</li>
+            <li class="list-group-item list-group-item-success">Harish Kumar G</li>
+          </ul> 
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main"> 
+
+          <h2 class="sub-header">User Feedback Comments</h2>
+          <div class="table-responsive">
+            <table id="data" class="table table-striped">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Date & Time</th>
+                  <th>User</th>
+                  <th>Rating</th>
+                  <th>Comment</th> 
+                </tr>
+              </thead>
+              <tbody>
+                {% for rec in feedbacks %}
+                  <tr>
+                    <td>{{ rec.id }}</td>
+                    <td>{{ rec.created }}</td>
+                    <td>{{ rec.username }}</td>
+                    <td>{{ rec.rating }}</td>
+                    <td>{{ rec.comment }}</td> 
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+<!-- Your page content Ends Here-->
+
+<script src="{{url_for('.static', filename='js/jquery.min.js')}}"></script>
+<script src="{{url_for('.static', filename='js/bootstrap.bundle.min.js')}}"></script>
+
+<!-- Core plugin JavaScript-->
+<script src="{{url_for('.static', filename='js/jquery.easing.min.js')}}"></script>
+
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
+<script>
+  $(document).ready(function () {
+    $('#data').DataTable();
+  });  
+</script>
+{% endblock %}
