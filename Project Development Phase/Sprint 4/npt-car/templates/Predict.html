@@ -1,0 +1,993 @@
+{% extends "base.html" %} 
+{% block title %}
+ Car Resale Value Calculation App 
+{% endblock %}
+
+<!-- {% block styles %}
+{{super()}}
+<link rel="stylesheet" href="{{url_for('.static', filename='starter-template.css')}}">
+{% endblock %} -->
+
+{% block content %}
+
+<table style="margin: 10px; text-align: justify; width: 100%">
+  <tr style="background-color: #304040; color: white" align="center">
+    <td> <a class="navbar-brand" href="{{ url_for('dashboard') }}">Dashboard</a></td>
+    <td>
+      <h1>Get the Accurate Resale Value of your Car!!!</h1>
+    </td>
+    <td><button type="button" class="btn btn-info openmodal" data-toggle="modal" 
+      data-target="#myModal"><i class="fa fa-comments"></i> Feedback</button></td>
+  </tr>
+</table>
+<div>
+  <div class="panel col-sm-6 mx-auto">
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">
+          Please fill the following details of your car:
+        </h6>
+      </div>
+      <div class="card-body">
+        <form id="frmPredict" name="frmPredict" class="user">
+          <div class="form-row">
+            <div class="col-md-4 mb-4">
+              <label for="brand" class="col-form-label">Car Brand</label>
+                </option>Audi A3</option>
+              <select class="form-control form-control-user" id="brand" name="brand" required> 
+              </select>
+            </div>
+            <div class="col-md-4 mb-4">
+              <label for="modeltype" class="col-form-label">Model Type</label>
+              <select class="form-control form-control-user" id="modeltype"  name="modeltype" required>
+                <option>35TDI PREMIUM </option>
+              </select>
+            </div>
+            <div class="col-md-4 mb-4">
+              <label for="regdate" class="col-form-label">Model Year</label>
+              <input class="form-control form-control-user" type="number" min="1997" max="2023" step="1" value="2016" id="regyear"
+                      name="regyear" placeholder="Registration Year" required/>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="col-md-4 mb-4">
+              <label for="powerps" class="col-form-label">Owner Hand</label>
+              <select class="form-control form-control-user" id="owner" name="owner" required>
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+                <option>6</option>
+                <option>7</option>
+                <option>8</option>
+              </select>
+            </div>
+            <div class="col-md-4 mb-4">
+              <label for="kms" class="col-form-label">Kilometers Driven</label>
+              <input type="number" class="form-control form-control-user" id="kms" name="kms" 
+                      placeholder="Kilometers the car has driven" value="0" required/>
+            </div>
+            <div class="col-md-4 mb-4">
+              <label for="gearbox" class="col-form-label">Car Type</label>
+              <select class="form-control form-control-user" id="gearbox" name="gearbox" required>
+                <option>Manual</option>
+                <option>Automatic</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="col-md-4 mb-4">
+              <label for="fuel" class="col-form-label">Car Fuel Type</label>
+              <select class="form-control form-control-user" id="fuel" name="fuel">
+                <option value="Diesel">Petrol</option>
+                <option value="Petrol">Diesel</option>
+              </select>
+            </div>
+            <div class="col-md-4 mb-4">
+              <label for="vehicletype" class="col-form-label">State</label>
+              <select class="form-control form-control-user" id="statename" name="statename">
+                <option>others</option>
+              </select>
+            </div>
+            <div class="col-md-4 mb-4">
+              <label for="dam" class="col-form-label">City</label>
+              <select class="form-control form-control-user" id="cityname" name="cityname" required>
+                <option>Hyderabad</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group row">
+            <div class="col-sm-4 center">
+              <button type="button" id="btnpredict" name="btnpredict" class="btn btn-primary form-control form-control-user">
+                PREDICT
+              </button>
+            </div>
+            <!-- <div class="col-sm-4 center">
+            <button type="button" id="Reset" name="Reset" class="btn btn-success form-control form-control-user" >
+              CLEAR
+            </button>
+          </div> -->
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="card border-left-success shadow h-100 py-2 col-xl-4 col-md-8 mb-4 mx-auto">
+  <div class="card-body">
+    <div class="row no-gutters align-items-center">
+      <img
+        id="logo"
+        name="logo"
+        src="/static/logos/audi.png"
+        height="80px"
+        width="80px"
+      />
+      <div class="col mr-2">
+        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+          Resale Value
+        </div>
+        <div class="h5 mb-0 font-weight-bold text-gray-800">
+          <h2 id="result" name="result">{{ypred}}</h2>
+        </div>
+      </div>
+      <div class="col-auto">
+        <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
+      </div>
+    </div>
+  </div>
+
+  <!--Division for Modal-->
+  <div id="myModal" class="modal fade" role="dialog">
+    <!--Modal-->
+    <div class="modal-dialog">
+      <!--Modal Content-->
+      <div class="modal-content">
+        <!-- Modal Header-->
+        <div class="modal-header">
+          <h3>Feedback Request</h3>
+
+          <!--Close/Cross Button-->
+          <button type="button" class="close" data-dismiss="modal" style="color: white" >
+            &times;
+          </button>
+        </div>
+
+        <!-- Modal Body-->
+        <div class="modal-body text-center">
+          <i class="far fa-file-alt fa-4x mb-2 animated rotateIn icon1"></i>
+          <h3>Your opinion matters</h3>
+          <h5>
+            Help us improve our product? <strong>Give us your feedback.</strong>
+          </h5>
+          <hr />
+          <h6>Your Rating</h6>
+        </div>
+        <form id="frmfeedback" name="frmfeedback">
+          <!-- Radio Buttons for Rating-->
+          <div class="form-check mb-1">
+            <input name="feedback" id="feedback" type="radio" value="Very Good"/>
+            <label class="ml-3">Very good</label>
+          </div>
+          <div class="form-check mb-1">
+            <input name="feedback" id="feedback" type="radio" value="Good" />
+            <label class="ml-3">Good</label>
+          </div>
+          <div class="form-check mb-1">
+            <input name="feedback" id="feedback" type="radio" value="Mediocre"/>
+            <label class="ml-3">Mediocre</label>
+          </div>
+          <div class="form-check mb-1">
+            <input name="feedback" id="feedback" type="radio" value="Bad" />
+            <label class="ml-3">Bad</label>
+          </div>
+          <div class="form-check mb-1">
+            <input name="feedback" id="feedback" type="radio" value="Very Bad"/>
+            <label class="ml-3">Very Bad</label>
+          </div>
+
+          <!--Text Message-->
+          <div class="text-center">
+            <h4>What could we improve?</h4>
+          </div>
+          <textarea class="w-100 p-3" type="textarea" placeholder="Your Message" rows="3" id="comment" name="comment"></textarea>
+
+          <!-- Modal Footer-->
+          <div class="modal-footer">
+            <a href="" class="btn btn-primary" id="btnsend" name="btnsend">Send<i class="fa fa-paper-plane"></i></a>
+            <a href="" class="btn btn-outline-primary" data-dismiss="modal">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  {% endblock %} 
+  
+  {% block scripts %}
+  <script lang="javascript">
+          var brandmodel=[['Audi','Audi A3','35TDI PREMIUM '],['Audi','Audi A4','2.0 TDI PREMIUM PLUS '],['Audi','Audi A4','2.0 TDI 174BHP PRM PLUS '],
+    ['Audi','Audi A4','2.0 TDI S LINE '],['Audi','Audi A6','35 TDI S LINE '],['Audi','Audi A6','2.0 TDI PREMIUM PLUS '],['Audi','Audi Q3','30TFSI Premium Plus '],
+    ['Audi','Audi Q3','35 TDI Quattro '],['Audi','Audi Q3','2.0 TDI QUATTRO '],['Audi','Audi Q3','2.0 TDI MT S EDITION '],['Audi','Audi Q3','30 TDI MT S EDITION '],
+    ['Audi','Audi Q3','30 TFSI Premium '],['BMW','BMW 3 Series','320D '],['BMW','BMW 3 Series','320D SPORTLINE '],['BMW','BMW 3 Series','320D LUXURYLINE '],
+    ['BMW','BMW 5 Series','520D 2.0 '],['BMW','BMW 5 Series','520D LUXURY LINE '],['BMW','BMW X1','SDRIVE 20D '],['BMW','BMW X3','XDRIVE 20D '],
+    ['Chevrolet','Chevrolet Cruze','LTZ AT '],['Datsun','Datsun Go Plus','T '],['Datsun','Datsun Redi Go','S '],['Datsun','Datsun Redi Go','1.0 T(O) '],
+    ['Datsun','Datsun Redi Go','T (O) '],['Datsun','Datsun Redi Go','1.0 S AT '],['Datsun','Datsun Redi Go','LIMITED EDITION '],['Datsun','Datsun Redi Go',' '],
+    ['Datsun','Datsun Redi Go','S 1.0 '],['Fiat','Fiat Grand Punto','DYNAMIC 1.3 '],['Fiat','Fiat Punto EVO','EMOTION 1.3 MULTIJET '],['Ford','Ford Ecosport','1.5 TITANIUMTDCI OPT '],
+    ['Ford','Ford Ecosport','1.5 TITANIUM PLUS TI VCT AT '],['Ford','Ford Ecosport','1.5TITANIUM TDCI '],['Ford','Ford Ecosport','1.5 TITANIUM TI VCT '],
+    ['Ford','Ford Ecosport','1.5 TDCI TITANIUM PLUS '],['Ford','Ford Ecosport','1.5 TITANIUM TI VCT AT '],['Ford','Ford Ecosport','1.5AMBIENTE TI VCT '],
+    ['Ford','Ford Ecosport','1.5 TREND+ TDCI '],['Ford','Ford Ecosport','1.0 ECOBOOST TITANIUM OPT '],['Ford','Ford Ecosport','1.5 TITANIUM SIGNATURE TI VCT (SUNROOF) '],
+    ['Ford','Ford Ecosport','1.0 ECOBOOST TITANIUM '],['Ford','Ford Ecosport','1.5 TREND TI VCT '],['Ford','Ford Ecosport','1.5 TREND TDCI '],
+    ['Ford','Ford Ecosport','1.5 AMBIENTE TDCI '],['Ford','Ford Ecosport','1.5 TITANIUM PLATINUM EDITION DIESEL '],['Ford','Ford Ecosport','TITANIUM PLUS 1.5 TI VCT MT '],
+    ['Ford','Ford Ecosport','1.5 TITANIUM + (SUNROOF) '],['Ford','Ford Ecosport','TITANIUM+ SPORT '],['Ford','Ford Ecosport','TREND + 1.5 TI VCT AT '],
+    ['Ford','Ford Ecosport','1.0 ECOBOOST TITANIUM SPORTS(SUNROOF) '],['Ford','Ford Endeavour','2.2l 4X4 MT Trend '],['Ford','Ford Figo','1.2 TITANIUM DURATEC '],
+    ['Ford','Ford Figo','1.2 EXI DURATEC '],['Ford','Ford Figo','1.2 ZXI DURATEC '],['Ford','Ford Figo','1.4 TITANIUM DURATORQ '],['Ford','Ford Figo Aspire','1.5 TITANIUM DIESEL '],
+    ['Ford','Ford Figo Aspire','1.2 TITANIUM PETROL '],['Ford','Ford Figo Aspire','1.2 TREND PETROL '],['Ford','Ford Figo Aspire','1.5 AMBIENTE DIESEL '],
+    ['Ford','Ford Figo Aspire','1.5 TREND DIESEL '],['Ford','Ford Figo Aspire','1.2 Trend+ Petrol '],['Ford','Ford Figo Aspire','1.5 TITANIUM AT PETROL '],['Ford','Ford FREESTYLE','TITANIUM 1.2 TI-VCT MT '],
+    ['Ford','Ford FREESTYLE','TITANIUM + 1.2 TI-VCT '],['Ford','Ford FREESTYLE','TITANIUM 1.5 TDCI '],['Ford','Ford New Figo','1.5 TITANIUM AT PETROL '],
+    ['Ford','Ford New Figo','1.2 TITANIUM '],['Ford','Ford New Figo','1.5 TITANIUM '],['Ford','Ford New Figo','1.2 TREND '],['Honda','Honda Amaze','1.2 SMT I VTEC '],
+    ['Honda','Honda Amaze','1.2 VXMT I VTEC '],['Honda','Honda Amaze','1.2 EXMT I VTEC '],['Honda','Honda Amaze','1.5 EMT I DTEC '],['Honda','Honda Amaze','1.2 SX MT I VTEC '],
+    ['Honda','Honda Amaze','1.2 SAT I VTEC '],['Honda','Honda Amaze','1.5 SMT I DTEC '],['Honda','Honda Amaze','1.5 VXMT I DTEC '],
+    ['Honda','Honda Amaze','1.2 V CVT I VTEC '],
+    ['Honda','Honda Amaze','1.2 V MT I-VTEC '],
+    ['Honda','Honda Amaze','VX AT I DTEC '],
+    ['Honda','Honda Amaze','1.2 VX CVT I VTEC '],
+    ['Honda','Honda Amaze','1.5 SX MT I DTEC '],
+    ['Honda','Honda Brio','1.2 S MT I VTEC '],
+    ['Honda','Honda Brio','1.2 VX AT I VTEC '],
+    ['Honda','Honda Brio','1.2 E MT I VTEC '],
+    ['Honda','Honda Brio','1.2 VX MT I VTEC '],
+    ['Honda','Honda Brio','1.2 V MT I VTEC '],
+    ['Honda','Honda Brio','1.2 S (O) MT IVTEC '],
+    ['Honda','Honda BR-V','1.5 i-VTEC VX '],
+    ['Honda','Honda BR-V','1.5 i-VTEC S '],
+    ['Honda','Honda BR-V','1.5 i- DTEC V '],
+    ['Honda','Honda City','V AT '],
+    ['Honda','Honda City','VX MT PETROL '],
+    ['Honda','Honda City','V MT DIESEL '],
+    ['Honda','Honda City','ZX MT PETROL '],
+    ['Honda','Honda City','VX CVT PETROL '],
+    ['Honda','Honda City','V MT PETROL '],
+    ['Honda','Honda City','S MT PETROL '],
+    ['Honda','Honda City','SV MT PETROL '],
+    ['Honda','Honda City','SV MT DIESEL '],
+    ['Honda','Honda City','1.5 V MT '],
+    ['Honda','Honda City','ZX CVT '],
+    ['Honda','Honda City','S AT '],
+    ['Honda','Honda City','VX MT DIESEL '],
+    ['Honda','Honda City','SV CVT PETROL '],
+    ['Honda','Honda City','S MT DIESEL '],
+    ['Honda','Honda City','V CVT '],
+    ['Honda','Honda City','ZX MT I-DTEC '],
+    ['Honda','Honda City','1.5 E MT PETROL '],
+    ['Honda','Honda Civic','ZX MT DIESEL '],
+    ['Honda','Honda Civic','VX CVT i-VTEC '],
+    ['Honda','Honda Civic','ZX CVT PETROL '],
+    ['Honda','Honda Civic','1.8V AT '],
+    ['Honda','Honda CRV','2.0 2WD AT '],
+    ['Honda','Honda CRV','2.4 AWD AT '],
+    ['Honda','Honda CRV','2.4 AT 4WD AVN '],
+    ['Honda','Honda Jazz','1.2 ZX MT '],
+    ['Honda','Honda Jazz','1.2 V AT '],
+    ['Honda','Honda Jazz','1.5 S MT '],
+    ['Honda','Honda Jazz','1.2 V MT '],
+    ['Honda','Honda Jazz','1.2 S AT '],
+    ['Honda','Honda Jazz','1.2 BASE I VTEC '],
+    ['Honda','Honda Jazz','1.2 VX AT '],
+    ['Honda','Honda Jazz','1.2 S MT '],
+    ['Honda','Honda Jazz','1.2 X I VTEC '],
+    ['Honda','Honda Jazz','1.2 SELECT I VTEC '],
+    ['Honda','Honda Jazz','1.5 SV I DTEC '],
+    ['Honda','Honda Jazz','VX  1.2 '],
+    ['Honda','Honda Jazz','1.2 SV MT '],
+    ['Honda','Honda Jazz','1.2 S I VTEC '],
+    ['Honda','Honda Jazz','1.5 VX I DTEC '],
+    ['Honda','Honda Mobilio','1.5 V OPT I DTEC '],
+    ['Honda','Honda WR-V','1.5 i-DTEC VX MT '],
+    ['Honda','Honda WR-V','1.2 i-VTEC VX MT '],
+    ['Honda','Honda WR-V','1.5 i-DTEC S MT '],
+    ['Honda','Honda WR-V','1.2 i-VTEC S MT '],
+    ['Hyundai','Hyundai AURA','SX (O) MT '],
+    ['Hyundai','Hyundai AURA','E MT 1.2 KAPPA '],
+    ['Hyundai','Hyundai Creta','1.6 CRDI SX PLUS AUTO '],
+    ['Hyundai','Hyundai Creta','1.6 SX PLUS PETROL '],
+    ['Hyundai','Hyundai Creta','1.6 SX CRDI '],
+    ['Hyundai','Hyundai Creta','1.6 SX (O) VTVT '],
+    ['Hyundai','Hyundai Creta','1.6 SX PLUS AUTO PETROL '],
+    ['Hyundai','Hyundai Creta','1.6 EX CRDI '],
+    ['Hyundai','Hyundai Creta','SX MT '],
+    ['Hyundai','Hyundai Creta','1.4 E PLUS CRDI '],
+    ['Hyundai','Hyundai Creta','1.4 S PLUS CRDI '],
+    ['Hyundai','Hyundai Creta','1.6 CRDI sx(o) executive '],
+    ['Hyundai','Hyundai Creta','1.6 VTVT SX AUTO '],
+    ['Hyundai','Hyundai Creta','1.6 SX PLUS VTVT '],
+    ['Hyundai','Hyundai Creta','1.6 E + VTVT '],
+    ['Hyundai','Hyundai Creta','SX PETROL MT '],
+    ['Hyundai','Hyundai Creta','1.6 SX (O) CRDI '],
+    ['Hyundai','Hyundai Creta','1.4 S CRDI '],
+    ['Hyundai','Hyundai Creta','1.6 S '],
+    ['Hyundai','Hyundai Creta','1.6 SX PLUS DIESEL '],
+    ['Hyundai','Hyundai Creta','S PETROL MT '],
+    ['Hyundai','Hyundai Creta','1.4 BASE '],
+    ['Hyundai','Hyundai Creta','1.6 SX AT CRDI '],
+    ['Hyundai','Hyundai Creta','1.6 SX PLUS AUTO '],
+    ['Hyundai','Hyundai Elite i20','SPORTZ 1.4 '],
+    ['Hyundai','Hyundai Elite i20','1.2 MAGNA PLUS VTVT '],
+    ['Hyundai','Hyundai Elite i20','SPORTZ (O) 1.4 '],
+    ['Hyundai','Hyundai Elite i20','SPORTZ 1.2 '],
+    ['Hyundai','Hyundai Elite i20','STA 1.4 CRDI '],
+    ['Hyundai','Hyundai Elite i20','STA 1.2 AT '],
+    ['Hyundai','Hyundai Elite i20','STA 1.2 '],
+    ['Hyundai','Hyundai Elite i20','STA 1.2 DUAL TONE '],
+    ['Hyundai','Hyundai Elite i20','STA 1.2 (O) '],
+    ['Hyundai','Hyundai Elite i20','1.4 CRDI ASTA (O) '],
+    ['Hyundai','Hyundai Elite i20','GNA 1.2 '],
+    ['Hyundai','Hyundai Elite i20','SPORTZ (O) 1.2 '],
+    ['Hyundai','Hyundai Elite i20','ERA 1.2 '],
+    ['Hyundai','Hyundai Elite i20','1.2 SPORTS PLUS VTVT '],
+    ['Hyundai','Hyundai Elite i20','1.2  ASTA (O) CVT '],
+    ['Hyundai','Hyundai Elite i20','1.4 SPORTS PLUS CRDI '],
+    ['Hyundai','Hyundai Elite i20','GNA 1.4 CRDI '],
+    ['Hyundai','Hyundai Elite i20','gna Executive 1.2 '],
+    ['Hyundai','Hyundai Elite i20','gna Executive 1.2 AT '],
+    ['Hyundai','Hyundai Eon','GNA PLUS '],
+    ['Hyundai','Hyundai Eon','ERA PLUS '],
+    ['Hyundai','Hyundai Eon','D LITE PLUS '],
+    ['Hyundai','Hyundai Eon','GNA PLUS AIRBAG '],
+    ['Hyundai','Hyundai Eon','SPORTZ '],
+    ['Hyundai','Hyundai Eon','ERA PLUS (O) '],
+    ['Hyundai','Hyundai Eon','GNA PLUS OPTIONAL '],
+    ['Hyundai','Hyundai Eon','D LITE PLUS(O) '],
+    ['Hyundai','Hyundai Grand i10','SPORTZ (O) 1.2 AT VTVT '],
+    ['Hyundai','Hyundai Grand i10','STA 1.1 (O) CRDI '],
+    ['Hyundai','Hyundai Grand i10','SPORTS 1.2 VTVT '],
+    ['Hyundai','Hyundai Grand i10','STA 1.2 KAPPA VTVT '],
+    ['Hyundai','Hyundai Grand i10','SPORTZ 1.2 KAPPA VTVT '],
+    ['Hyundai','Hyundai Grand i10','GNA 1.2 KAPPA VTVT '],
+    ['Hyundai','Hyundai Grand i10','Sportz(O) 1.2 MT '],
+    ['Hyundai','Hyundai Grand i10','GNA 1.2 VTVT '],
+    ['Hyundai','Hyundai Grand i10','STA 1.2 VTVT '],
+    ['Hyundai','Hyundai Grand i10','STA 1.2 AT VTVT '],
+    ['Hyundai','Hyundai Grand i10','SPORTZ 1.1 CRDI '],
+    ['Hyundai','Hyundai Grand i10','STA 1.2 (O) VTVT '],
+    ['Hyundai','Hyundai Grand i10','1.2 Sportz at '],
+    ['Hyundai','Hyundai Grand i10','gna 1.2 AT  VTVT '],
+    ['Hyundai','Hyundai Grand i10','GNA AT 1.2 KAPPA VTVT '],
+    ['Hyundai','Hyundai Grand i10','STA 1.2 KAPPA VTVT OPT '],
+    ['Hyundai','Hyundai Grand i10','SPORTZ DUAL TONE 1.2 VTVT '],
+    ['Hyundai','Hyundai Grand i10','1.2 CRDI Sportz O '],
+    ['Hyundai','Hyundai Grand i10','1.2 ASTA (O) AT '],
+    ['Hyundai','Hyundai Grand i10','GNA 1.1 CRDI '],
+    ['Hyundai','Hyundai Grand i10','Prime 1.2 '],
+    ['Hyundai','Hyundai Grand i10','Sportz1.2 CRDI '],
+    ['Hyundai','Hyundai Grand i10','SPORTZ O 1.2 '],
+    ['Hyundai','Hyundai Grand i10','STA 1.2 CRDI '],
+    ['Hyundai','Hyundai Grand i10','STA AT 1.2 KAPPA VTVT '],
+    ['Hyundai','Hyundai Grand i10','gna 1.2 crdi '],
+    ['Hyundai','Hyundai Grand i10','1.2 KAPPA SPORTZ (O) '],
+    ['Hyundai','Hyundai GRAND I10 NIOS','1.2 Kappa Sports MT '],
+    ['Hyundai','Hyundai GRAND I10 NIOS','SPORTZ 1.2 AT '],
+    ['Hyundai','Hyundai GRAND I10 NIOS','GNA 1.2 AT '],
+    ['Hyundai','Hyundai GRAND I10 NIOS','SPORTZ PETROL '],
+    ['Hyundai','Hyundai GRAND I10 NIOS','sta Petrol '],
+    ['Hyundai','Hyundai GRAND I10 NIOS','ERA PETROL '],
+    ['Hyundai','Hyundai GRAND I10 NIOS','GNA 1.2 MT '],
+    ['Hyundai','Hyundai i10','SPORTZ 1.2 KAPPA2 '],
+    ['Hyundai','Hyundai i10','ERA 1.1 IRDE '],
+    ['Hyundai','Hyundai i10','GNA 1.1 IRDE2 '],
+    ['Hyundai','Hyundai i10','SPORTZ 1.1 IRDE2 '],
+    ['Hyundai','Hyundai i10','SPORTZ 1.2 AT KAPPA2 '],
+    ['Hyundai','Hyundai i10','GNA 1.2 KAPPA2 '],
+    ['Hyundai','Hyundai i10','SPORTZ 1.2 '],
+    ['Hyundai','Hyundai i10','GNA 1.2 '],
+    ['Hyundai','Hyundai i10','STA 1.2 AT KAPPA2 WITH SUNROOF '],
+    ['Hyundai','Hyundai i20','GNA O 1.2 '],
+    ['Hyundai','Hyundai i20','SPORTZ 1.2 VTVT '],
+    ['Hyundai','Hyundai i20','SPORTZ 1.4 AT VTVT '],
+    ['Hyundai','Hyundai i20','STA 1.2 '],
+    ['Hyundai','Hyundai i20','SPORTZ 1.4 CRDI '],
+    ['Hyundai','Hyundai i20','ERA 1.4 CRDI '],
+    ['Hyundai','Hyundai i20','STA 1.4 CRDI '],
+    ['Hyundai','Hyundai i20','STA 1.2 O '],
+    ['Hyundai','Hyundai i20','GNA 1.2 VTVT '],
+    ['Hyundai','Hyundai i20','SPORTZ 1.2 O '],
+    ['Hyundai','Hyundai i20','GNA O 1.4 CRDI '],
+    ['Hyundai','Hyundai i20 Active','1.2 S '],
+    ['Hyundai','Hyundai i20 Active','1.4 SX '],
+    ['Hyundai','Hyundai i20 Active','1.2 SX '],
+    ['Hyundai','Hyundai i20 Active','1.2'],
+    ['Hyundai','Hyundai New Elantra','S 1.6 MT '],
+    ['Hyundai','Hyundai New Elantra','2.0 SX (O) AT '],
+    ['Hyundai','Hyundai New Elantra','1.6 SX AT '],
+    ['Hyundai','Hyundai New Elantra','1.6 SX AT O '],
+    ['Hyundai','Hyundai NEW I20','STA (O) 1.5 CRDI MT '],
+    ['HYUNDAI','HYUNDAI NEW I20','STA (O) 1.0 TURBO GDI AT '],
+    ['Hyundai','Hyundai NEW SANTRO','1.1 SPORTS AMT '],
+    ['Hyundai','Hyundai NEW SANTRO','SPORTZ 1.1 '],
+    ['Hyundai','Hyundai NEW SANTRO','1.1 MAGNA MT '],
+    ['Hyundai','Hyundai NEW SANTRO','ERA 1.1 '],
+    ['Hyundai','Hyundai NEW SANTRO','STA 1.1 MT '],
+    ['Hyundai','Hyundai NEW SANTRO','1.1 ERA EXICUTIVE '],
+    ['Hyundai','Hyundai Santro Xing','GLS '],
+    ['Hyundai','Hyundai Tucson New','4WD AT GLS DIESEL '],
+    ['Hyundai','Hyundai Tucson New','2WD AT GLS DIESEL '],
+    ['Hyundai','Hyundai Tucson New','2WD AT GL DIESEL '],
+    ['Hyundai','Hyundai VENUE','1.5 SX CRDI MT '],
+    ['Hyundai','Hyundai VENUE','S MT 1.2 KAPPA '],
+    ['Hyundai','Hyundai VENUE','SX 1.0 GDI IMT '],
+    ['Hyundai','Hyundai VENUE','1.0L Turbo GDI SX(O) MT '],
+    ['Hyundai','Hyundai VENUE','SX(O) CRDi '],
+    ['Hyundai','Hyundai VENUE','1.4 CRDI MT SX '],
+    ['Hyundai','Hyundai VENUE','1.0 TURBO GDI SX+ AT '],
+    ['Hyundai','Hyundai VENUE','S MT Turbo GDI 1.0L '],
+    ['Hyundai','Hyundai VENUE','1.0L Turbo GDI SX MT '],
+    ['Hyundai','Hyundai VENUE','E MT 1.2  KAPPA '],
+    ['Hyundai','Hyundai VENUE','1.0 SX TURBO GDI DUAL TONE '],
+    ['Hyundai','Hyundai VENUE','1.4 CRDI S MT '],
+    ['Hyundai','Hyundai Verna','1.6 CRDI SX + AT '],
+    ['Hyundai','Hyundai Verna','1.6 SX VTVT '],
+    ['Hyundai','Hyundai Verna','1.6 SX (O) CRDI MT '],
+    ['Hyundai','Hyundai Verna','1.6 SX VTVT AT (O) '],
+    ['Hyundai','Hyundai Verna','1.6 CRDI SX '],
+    ['Hyundai','Hyundai Verna','FLUIDIC 1.6 CRDI SX OPT AT '],
+    ['Hyundai','Hyundai Verna','SX PETROL AT '],
+    ['Hyundai','Hyundai Verna','1.4 VTVT E '],
+    ['Hyundai','Hyundai Verna','FLUIDIC 1.4 VTVT '],
+    ['Hyundai','Hyundai Verna','FLUIDIC 1.6 VTVT S (O)  MT '],
+    ['Hyundai','Hyundai Verna','FLUIDIC 1.6 SX VTVT OPT '],
+    ['Hyundai','Hyundai Verna','FLUIDIC 1.6 SX VTVT '],
+    ['Hyundai','Hyundai Verna','FLUIDIC 1.6 SX CRDI '],
+    ['Hyundai','Hyundai Verna','FLUIDIC 1.6 EX VTVT '],
+    ['Hyundai','Hyundai Verna','1.6 SX VTVT (O) '],
+    ['Hyundai','Hyundai Verna','FLUIDIC 1.6 CRDI SX OPT '],
+    ['Hyundai','Hyundai Verna','FLUIDIC 1.4 VTVT CX '],
+    ['Hyundai','Hyundai Verna','FLUIDIC 1.6 CRDI S (o) '],
+    ['Hyundai','Hyundai Verna','1.4 VTVT EX '],
+    ['Hyundai','Hyundai Verna','1.6 SX (O) AT CRDI '],
+    ['Hyundai','Hyundai Xcent','S 1.2 '],
+    ['Hyundai','Hyundai Xcent','SX 1.2 '],
+    ['Hyundai','Hyundai Xcent','S 1.2 OPT '],
+    ['Hyundai','Hyundai Xcent','SPECIAL EDITION 1.2 '],
+    ['Hyundai','Hyundai Xcent','BASE 1.2 '],
+    ['Hyundai','Hyundai Xcent','SX 1.2 OPT '],
+    ['Hyundai','Hyundai Xcent','1.2 S CRDI '],
+    ['ISUZU','ISUZU D-MAX S-CAB','2.5 TD '],
+    ['Jaguar','Jaguar XF','2.2 DIESEL '],
+    ['Jeep','Jeep Compass','2.0 LIMITED 4*2 '],
+    ['Jeep','Jeep Compass','2.0 LIMITED '],
+    ['Jeep','Jeep Compass','2.0 LONGITUDE '],
+    ['Jeep','Jeep Compass','LIMITED 1.4 AT '],
+    ['Jeep','Jeep Compass','2.0 LIMITED PLUS '],
+    ['Jeep','Jeep Compass','LIMITED O 1.4 AT '],
+    ['Jeep','Jeep Compass','LIMITED PLUS 2.0 4*4 '],
+    ['Jeep','Jeep Compass','1.4 LIMITED PLUS AT '],
+    ['Jeep','Jeep Compass','2.0 LONGITUDE (O) '],
+    ['Jeep','Jeep Compass','2.0 SPORT '],
+    ['KIA','KIA SELTOS','HTK 1.5 PETROL '],
+    ['KIA','KIA SELTOS','HTX 1.5 PETROL MT '],
+    ['KIA','KIA SELTOS','GTX 1.4 GDI AT PETROL '],
+    ['KIA','KIA SELTOS','HTK PLUS 1.5 PETROL '],
+    ['KIA','KIA SELTOS','HTX AT PETROL '],
+    ['KIA','KIA SELTOS','GTX+ 1.4 MT '],
+    ['KIA','KIA SELTOS','1.4 GTX+ TURBO GDI PETROL AT '],
+    ['KIA','KIA SELTOS','GTX + AT PETROL '],
+    ['KIA','KIA SELTOS','HTK PLUS AT 1.5 DIESEL '],
+    ['KIA','KIA SELTOS','HTX 1.5 DIESEL '],
+    ['Landrover','Landrover Freelander 2','TD4 SE '],
+    ['Mahindra','Mahindra KUV 100 NXT','K2 6 STR '],
+    ['Mahindra','Mahindra KUV 100 NXT','K4+ 6S '],
+    ['Mahindra','Mahindra Kuv100','K6+ 6 STR '],
+    ['Mahindra','Mahindra Kuv100','K8 D 6 STR '],
+    ['Mahindra','Mahindra MARAZZO','8 7 STR '],
+    ['Mahindra','Mahindra Scorpio','S6+ INTELL HYBRID '],
+    ['Mahindra','Mahindra Scorpio','S6 PLUS '],
+    ['Mahindra','Mahindra Scorpio','S2 '],
+    ['Mahindra','Mahindra Scorpio','S5 2WD '],
+    ['Mahindra','Mahindra Scorpio','S4+Intelli Hybrid 2WD '],
+    ['Mahindra','Mahindra Scorpio','S10 Intelli Hybrid 2WD '],
+    ['Mahindra','Mahindra Scorpio','S10 '],
+    ['Mahindra','Mahindra Scorpio','S4PLUS '],
+    ['Mahindra','Mahindra Scorpio','S4 '],
+    ['Mahindra','Mahindra Scorpio','SLE BS IV '],
+    ['Mahindra','Mahindra Scorpio','S7 140 BHP 2WD '],
+    ['Mahindra','Mahindra Thar','CRDE 4X4 BS IV '],
+    ['Mahindra','Mahindra TUV300','T6+ '],
+    ['Mahindra','Mahindra TUV300','T8 '],
+    ['Mahindra','Mahindra TUV300','T 10 MT Dual Tone '],
+    ['Mahindra','Mahindra TUV300','T8 AT '],
+    ['Mahindra','Mahindra XUV 3OO','W8 (O) DIESEL  AT '],
+    ['Mahindra','Mahindra XUV 3OO','W8 (O) Dual tone Diesel '],
+    ['Mahindra','Mahindra XUV500','W11 '],
+    ['Mahindra','Mahindra XUV500','W9 '],
+    ['Mahindra','Mahindra XUV500','W11 AT '],
+    ['Mahindra','Mahindra XUV500','W10 '],
+    ['Mahindra','Mahindra XUV500','W7 FWD '],
+    ['Mahindra','Mahindra XUV500','W8 FWD '],
+    ['Mahindra','Mahindra XUV500','W6 4X2 '],
+    ['Mahindra','Mahindra XUV500','W10 FWD '],
+    ['Mahindra','Mahindra XUV500','W11 (O) '],
+    ['Mahindra','Mahindra XUV500','W10 AT '],
+    ['Mahindra','Mahindra XUV500','W11 (O) AT '],
+    ['Mahindra','Mahindra Xylo','H8 ABS AIRBAG BS IV '],
+    ['Maruti','Maruti A Star','VXI '],
+    ['Maruti','Maruti A Star','LXI '],
+    ['Maruti','Maruti A Star','VXI ABS AT '],
+    ['Maruti','Maruti Alto','VXI '],
+    ['Maruti','Maruti Alto','LXI '],
+    ['Maruti','Maruti Alto','VXI PLUS '],
+    ['Maruti','Maruti Alto','LXI OPT '],
+    ['Maruti','Maruti Alto','LXI CNG '],
+    ['Maruti','Maruti Alto 800','LXI '],
+    ['Maruti','Maruti Alto 800','VXI (O) '],
+    ['Maruti','Maruti Alto 800','VXI '],
+    ['Maruti','Maruti Alto 800','LXI OPT '],
+    ['Maruti','Maruti Alto 800','LXI CNG '],
+    ['Maruti','Maruti Alto K10','VXI '],
+    ['Maruti','Maruti Alto K10','LXI '],
+    ['Maruti','Maruti Alto K10','VXI (O) AMT '],
+    ['Maruti','Maruti Alto K10','VXI AMT '],
+    ['Maruti','Maruti Alto K10','VXI OPT '],
+    ['Maruti','Maruti Alto K10','LXI CNG (O) '],
+    ['Maruti','Maruti Baleno','DELTA 1.2 K12 '],
+    ['Maruti','Maruti Baleno','LPHA 1.2 K12 '],
+    ['Maruti','Maruti Baleno','ZETA 1.2 K12 '],
+    ['Maruti','Maruti Baleno','LPHA 1.2 K12 AMT '],
+    ['Maruti','Maruti Baleno','ZETA 1.2 K12 AMT '],
+    ['Maruti','Maruti Baleno','DELTA DDIS 190 '],
+    ['Maruti','Maruti Baleno','LPHA DDIS 190 '],
+    ['Maruti','Maruti Baleno','RS 1.0 PETROL '],
+    ['Maruti','Maruti Baleno','SIGMA 1.2 K12 '],
+    ['Maruti','Maruti Baleno','DELTA 1.2 K12 AMT '],
+    ['Maruti','Maruti Baleno','ZETA 1.2 K12 CVT '],
+    ['Maruti','Maruti Baleno','ZETA DDIS 190 '],
+    ['Maruti','Maruti Baleno','DELTA 1.2 K12 AT '],
+    ['Maruti','Maruti Celerio','VXI AMT '],
+    ['Maruti','Maruti Celerio','ZXI OPT AMT '],
+    ['Maruti','Maruti Celerio','ZXI '],
+    ['Maruti','Maruti Celerio','VXI '],
+    ['Maruti','Maruti Celerio','ZXI OPT '],
+    ['Maruti','Maruti Celerio','ZXI AMT '],
+    ['Maruti','Maruti Celerio','Tour H2 '],
+    ['Maruti','Maruti Celerio','VXI (O) AMT '],
+    ['Maruti','Maruti Celerio','VXI (O) '],
+    ['Maruti','Maruti Celerio','ZDI '],
+    ['Maruti','Maruti Celerio X','ZXI OPT AMT '],
+    ['Maruti','Maruti Celerio X','Zxi '],
+    ['Maruti','Maruti Celerio X','Vxi '],
+    ['Maruti','Maruti Ciaz','LPHA 1.5 AT VTVT SHVS '],
+    ['Maruti','Maruti Ciaz','ZXI '],
+    ['Maruti','Maruti Ciaz','DELTA 1.5 SHVS VVT MT '],
+    ['Maruti','Maruti Ciaz','LPHA 1.4 VVT AMT '],
+    ['Maruti','Maruti Ciaz','ZETA 1.4 VVT '],
+    ['Maruti','Maruti Ciaz','VXI '],
+    ['Maruti','Maruti Ciaz','LPHA 1.3 DDIS SHVS '],
+    ['Maruti','Maruti Ciaz','lpha 1.5 Diesel '],
+    ['Maruti','Maruti Ciaz','ZETA 1.4 VVT AMT '],
+    ['Maruti','Maruti Ciaz','VXI PLUS AMT '],
+    ['Maruti','Maruti Ciaz','LPHA 1.4 VVT '],
+    ['Maruti','Maruti Ciaz','ZDI+ SHVS RS MT '],
+    ['Maruti','Maruti Ciaz','ZETA 1.4 AT '],
+    ['Maruti','Maruti Ciaz','ZXI PLUS '],
+    ['Maruti','Maruti Ciaz','DELTA 1.3 DDIS SHVS '],
+    ['Maruti','Maruti Ciaz','VDI PLUS '],
+    ['Maruti','Maruti Ciaz','VDI+ SHVS '],
+    ['Maruti','Maruti Ciaz','ZDI+ SHVS '],
+    ['Maruti','Maruti Ciaz','VDI (O) SHVS HYBIRD '],
+    ['Maruti','Maruti Ciaz','LPHA 1.5 AT SHVS '],
+    ['Maruti','Maruti Ciaz','DELTA 1.4 VVT '],
+    ['Maruti','Maruti Ciaz','VXI PLUS '],
+    ['Maruti','Maruti Ciaz','ZDI+ '],
+    ['Maruti','Maruti Ciaz','ZETA 1.5 SHVS VVT MT '],
+    ['Maruti','Maruti Ciaz','VDI '],
+    ['Maruti','Maruti Ciaz','ZDI SHVS HYBIRD '],
+    ['Maruti','Maruti Ciaz','ZETA 1.3 DDIS SHVS '],
+    ['Maruti','Maruti Ciaz','ZDI SHVS '],
+    ['Maruti','Maruti Ciaz','ZXI AT '],
+    ['Maruti','Maruti Dzire','VDI '],
+    ['Maruti','Maruti Dzire','ZDI Plus '],
+    ['Maruti','Maruti Dzire','VXI '],
+    ['Maruti','Maruti Dzire','ZXI Plus '],
+    ['Maruti','Maruti Dzire','ZDI Plus AMT '],
+    ['Maruti','Maruti Dzire','VDI AMT '],
+    ['Maruti','Maruti Dzire','ZXI AMT '],
+    ['Maruti','Maruti Dzire','VXI AMT '],
+    ['Maruti','Maruti Dzire','ZXI '],
+    ['Maruti','Maruti Dzire','ZDI '],
+    ['Maruti','Maruti Eeco','7 STR '],
+    ['Maruti','Maruti Eeco','5 STR WITH AC PLUSHTR '],
+    ['Maruti','Maruti Ertiga','VDI SHVS '],
+    ['Maruti','Maruti Ertiga','VDI SHVS LIMITED EDITION '],
+    ['Maruti','Maruti Ertiga','VDI ABS '],
+    ['Maruti','Maruti Ertiga','ZDI '],
+    ['Maruti','Maruti Ertiga','ZXI '],
+    ['Maruti','Maruti Ertiga','ZDI PLUS SHVS '],
+    ['Maruti','Maruti Ertiga','VXI '],
+    ['Maruti','Maruti Ertiga','ZDI SHVS '],
+    ['Maruti','Maruti Ertiga','ZXI SMART HYBRID AT '],
+    ['Maruti','Maruti Ertiga','ZXI Plus SHVS '],
+    ['Maruti','Maruti IGNIS','LPHA 1.2 K12 DUAL TONE '],
+    ['Maruti','Maruti IGNIS','SIGMA 1.2 K12 '],
+    ['Maruti','Maruti IGNIS','ZETA 1.2 K12 '],
+    ['Maruti','Maruti IGNIS','DELTA 1.2 K12 AMT '],
+    ['Maruti','Maruti IGNIS','DELTA 1.2 K12 '],
+    ['Maruti','Maruti IGNIS','ZETA 1.2 K12 AMT '],
+    ['Maruti','Maruti IGNIS','LPHA 1.2 K12 '],
+    ['Maruti','Maruti IGNIS','DELTA 1.3 DDIS '],
+    ['Maruti','Maruti New  Wagon-R','VXI 1.2L '],
+    ['Maruti','Maruti New  Wagon-R','1.0 VXI (O) '],
+    ['Maruti','Maruti New  Wagon-R','ZXI 1.2 '],
+    ['Maruti','Maruti New  Wagon-R','LXI 1.0 L '],
+    ['Maruti','Maruti New  Wagon-R','VXI 1.0 '],
+    ['Maruti','Maruti OMNI E','STD '],
+    ['Maruti','Maruti OMNI E','8 STR '],
+    ['Maruti','Maruti Ritz','VXI BS IV '],
+    ['Maruti','Maruti Ritz','LXI '],
+    ['Maruti','Maruti Ritz','VXI ABS '],
+    ['Maruti','Maruti Ritz','VDI '],
+    ['Maruti','Maruti Ritz','ZDI '],
+    ['Maruti','Maruti Ritz','ZXI '],
+    ['Maruti','Maruti Ritz','VXI GENUS '],
+    ['Maruti','Maruti Ritz','LDI '],
+    ['Maruti','Maruti S Cross','ZETA 1.3 '],
+    ['Maruti','Maruti S Cross','ZETA 1.3 SHVS '],
+    ['Maruti','Maruti S Cross','DELTA SHVS '],
+    ['Maruti','Maruti S Cross','LPHA SHVS '],
+    ['Maruti','Maruti S Cross','ZETA SHVS '],
+    ['Maruti','Maruti S Cross','LPHA 1.6 '],
+    ['Maruti','Maruti S Cross','ZETA SHVS PETROL '],
+    ['Maruti','Maruti S Cross','DELTA 1.3 '],
+    ['Maruti','Maruti S Cross','SIGMA SHVS '],
+    ['Maruti','Maruti S Cross','DELTA 1.6 '],
+    ['Maruti','Maruti S PRESSO','VXI PLUS '],
+    ['Maruti','Maruti S PRESSO','VXI '],
+    ['Maruti','Maruti S PRESSO','VXI (O) '],
+    ['Maruti','Maruti S PRESSO','VXI PLUS AGS '],
+    ['Maruti','Maruti S PRESSO','VXI AGS '],
+    ['Maruti','Maruti S PRESSO','LXI '],
+    ['Maruti','Maruti Swift','ZDI '],
+    ['Maruti','Maruti Swift','VDI '],
+    ['Maruti','Maruti Swift','VXI '],
+    ['Maruti','Maruti Swift','VXI OPT '],
+    ['Maruti','Maruti Swift','VDI OPT '],
+    ['Maruti','Maruti Swift','VDI ABS '],
+    ['Maruti','Maruti Swift','VXI AMT '],
+    ['Maruti','Maruti Swift','ZDI AMT '],
+    ['Maruti','Maruti Swift','ZXI '],
+    ['Maruti','Maruti Swift','VDI AMT '],
+    ['Maruti','Maruti Swift','LXI '],
+    ['Maruti','Maruti Swift','LDI BS IV '],
+    ['Maruti','Maruti Swift','LDI O '],
+    ['Maruti','Maruti Swift','LXI OPT '],
+    ['Maruti','Maruti Swift','ZDI + '],
+    ['Maruti','Maruti Swift','ZXI AMT '],
+    ['Maruti','Maruti Swift','ZXI PLUS AMT '],
+    ['Maruti','Maruti Swift Dzire','VDI BS IV '],
+    ['Maruti','Maruti Swift Dzire','VXI 1.2 BS IV '],
+    ['Maruti','Maruti Swift Dzire','ZDI AMT '],
+    ['Maruti','Maruti Swift Dzire','VXI '],
+    ['Maruti','Maruti Swift Dzire','VXI OPT '],
+    ['Maruti','Maruti Swift Dzire','ZXI 1.2 BS IV '],
+    ['Maruti','Maruti Swift Dzire','LDI BS IV '],
+    ['Maruti','Maruti Swift Dzire','ZDI '],
+    ['Maruti','Maruti Swift Dzire','VDI ABS '],
+    ['Maruti','Maruti Swift Dzire','VDI '],
+    ['Maruti','Maruti SX4','ZDI '],
+    ['Maruti','Maruti Vitara Brezza','VDI '],
+    ['Maruti','Maruti Vitara Brezza','ZDI '],
+    ['Maruti','Maruti Vitara Brezza','VDI AMT '],
+    ['Maruti','Maruti Vitara Brezza','ZDI PLUS DUAL TONE '],
+    ['Maruti','Maruti Vitara Brezza','VDI OPT '],
+    ['Maruti','Maruti Vitara Brezza','LXI '],
+    ['Maruti','Maruti Vitara Brezza','ZDI PLUS '],
+    ['Maruti','Maruti Vitara Brezza','ZDI + AMT '],
+    ['Maruti','Maruti Vitara Brezza','ZXI + '],
+    ['Maruti','Maruti Vitara Brezza','LDI OPT '],
+    ['Maruti','Maruti Vitara Brezza','ZDI AMT '],
+    ['Maruti','Maruti Vitara Brezza','ZXI AT SHVS '],
+    ['Maruti','Maruti Vitara Brezza','LDI '],
+    ['Maruti','Maruti Vitara Brezza','ZXI+ AT SHVS '],
+    ['Maruti','Maruti Vitara Brezza','ZXI '],
+    ['Maruti','Maruti Vitara Brezza','ZDI+ DUAL TONE AMT '],
+    ['Maruti','Maruti Wagon R','LXI '],
+    ['Maruti','Maruti Wagon R','LXI MINOR '],
+    ['Maruti','Maruti Wagon R 1.0','VXI '],
+    ['Maruti','Maruti Wagon R 1.0','VXI AMT '],
+    ['Maruti','Maruti Wagon R 1.0','LXI '],
+    ['Maruti','Maruti Wagon R 1.0','VXI OPT '],
+    ['Maruti','Maruti Wagon R 1.0','VXI OPT AMT '],
+    ['Maruti','Maruti Wagon R 1.0','VXI PLUS AMT '],
+    ['Maruti','Maruti Wagon R 1.0','VXI PLUS '],
+    ['Maruti','Maruti Wagon R 1.0','LXI CNG '],
+    ['Maruti','Maruti Wagon R Stingray','VXI '],
+    ['Maruti','Maruti Wagon R Stingray','LXI '],
+    ['Maruti','Maruti XL6','LPHA SHVS  MT '],
+    ['Maruti','Maruti XL6','ZETA SHVS '],
+    ['Maruti','Maruti XL6','ZETA AT SHVS '],
+    ['Maruti','Maruti Zen','LX '],
+    ['Maruti','Maruti Zen Estilo','VXI '],
+    ['Maruti','Maruti Zen Estilo','LXI '],
+    ['Mercedes','Mercedes Benz B Class','B200 CDI SPORT '],
+    ['Mercedes','Mercedes Benz C Class','C 220 CDI AVANTGARDE '],
+    ['Mercedes','Mercedes Benz C Class','200 CGI AVANTGARDE '],
+    ['Mercedes','Mercedes Benz C Class','250 CDI ELEGANCE AT '],
+    ['Mercedes','Mercedes Benz CLA Class','CLA 200 CDI SPORT '],
+    ['Mercedes','Mercedes Benz E Class','E 250 CDI AVANTGARDE '],
+    ['Mercedes','Mercedes Benz E Class','E 220 CDI ELEGANCE '],
+    ['Mercedes','Mercedes Benz E Class','E 250 CDI ELEGANCE '],
+    ['Mercedes','Mercedes Benz GLC CLASS','220 D SPORT 4MATIC '],
+    ['MG','MG HECTOR','SHARP DCT PETROL '],
+    ['MG','MG HECTOR','SHARP 2.0 DIESEL '],
+    ['MG','MG HECTOR','SMART DCT PETROL '],
+    ['MG','MG HECTOR','SHARP HYBIRD PETROL MT '],
+    ['MG','MG HECTOR PLUS','SHARP HYBRID PETROL '],
+    ['Nissan','Nissan MAGNITE','XV  TURBO MT '],
+    ['Nissan','Nissan Micra','XV CVT '],
+    ['Nissan','Nissan Micra','XV PETROL '],
+    ['Nissan','Nissan Micra','XL CVT (PETROL) '],
+    ['Nissan','Nissan Micra Active','XL(O) '],
+    ['Nissan','Nissan Terrano','XL PLUS 85 PS DEISEL '],
+    ['Nissan','Nissan Terrano','XV 110 DIESEL '],
+    ['Renault','Renault Captur','PLATINE DUAL TONE '],
+    ['Renault','Renault Captur','RXE PETROL MT '],
+    ['Renault','Renault Duster','RXS CVT 106 PS '],
+    ['Renault','Renault Duster','RXL PETROL 104 '],
+    ['Renault','Renault Duster','RXZ DIESEL 110 '],
+    ['Renault','Renault Duster','85 PS RXE '],
+    ['Renault','Renault Duster','85 PS RXL OPT '],
+    ['Renault','Renault Duster','85 PS RXL '],
+    ['Renault','Renault Duster','RXL 110 PS ADVENTURE '],
+    ['Renault','Renault Duster','RXZ 110 4WD '],
+    ['Renault','Renault Duster','RXS 85 PS '],
+    ['Renault','Renault Duster','RXZ '],
+    ['Renault','Renault Duster','RXL 85PS EXPLORE '],
+    ['Renault','Renault Duster','RXZ AMT 110 PS '],
+    ['Renault','Renault Kiger','RXZ 1.0 MT '],
+    ['RENAULT','RENAULT Kiger','RXT 1.0 AMT '],
+    ['Renault','Renault Kwid','CLIMBER 1.0 AT '],
+    ['Renault','Renault Kwid','1.0 RXT Opt AT '],
+    ['Renault','Renault Kwid','RXT 1.0 EASY-R  AT '],
+    ['Renault','Renault Kwid','RXL '],
+    ['Renault','Renault Kwid','RXT '],
+    ['Renault','Renault Kwid','1.0 RXT Opt '],
+    ['Renault','Renault Kwid','RXL1.0 EASY-R AT '],
+    ['Renault','Renault Kwid','1.0 RXT '],
+    ['Renault','Renault Kwid','RXT 1.0 EASY-R AT OPTION '],
+    ['Renault','Renault Kwid','RXT Opt '],
+    ['Renault','Renault Kwid','1.0 CLIMBER OPT AMT '],
+    ['Renault','Renault Kwid','1.0 CLIMBER OPT '],
+    ['Renault','Renault Kwid','RXT 02 Anniversary Edition '],
+    ['Renault','Renault Kwid','CLIMBER 1.0 '],
+    ['Renault','Renault Kwid','1.0 RXL AT '],
+    ['Renault','Renault Lodgy','110 PS RXZ 8 STR '],
+    ['Renault','Renault TRIBER','1.0 RXT '],
+    ['Renault','Renault TRIBER','1.0 RXL PETROL '],
+    ['Renault','Renault TRIBER','1.0 RXZ '],
+    ['Skoda','Skoda Laura','MBIENTE 2.0 TDI CR AT '],
+    ['Skoda','Skoda Octavia','Style 1.4 TSI MT '],
+    ['Skoda','Skoda Octavia','1.8 TSI STYLE AT '],
+    ['Skoda','Skoda Octavia','ELEGANCE 2.0 TDI CR AT '],
+    ['Skoda','Skoda Octavia','LK 1.8 TSI AT '],
+    ['Skoda','Skoda Rapid','ELEGANCE 1.6 MPFI MT '],
+    ['Skoda','Skoda Rapid','STYLE 1.6 MPI MT '],
+    ['Skoda','Skoda Rapid','Style 1.5 TDI AT '],
+    ['Skoda','Skoda Rapid','CTIVE 1.0 TSI '],
+    ['Skoda','Skoda Rapid','1.6 MPI MT ACTIVE '],
+    ['Skoda','Skoda Rapid','1.5 TDI MT AMBITION '],
+    ['Skoda','Skoda Rapid','STYLE 1.0TSI MT '],
+    ['Skoda','Skoda Rapid','MBITION 1.6 MPI MT PLUS '],
+    ['Skoda','Skoda Rapid','ELEGANCE 1.6 TDI MT '],
+    ['Skoda','Skoda Rapid','1.5 TDI MT STYLE '],
+    ['Skoda','Skoda Superb','1.8 TSI LK AT '],
+    ['Skoda','Skoda Superb','1.8 TSI STYLE AT '],
+    ['Skoda','Skoda Superb','2.0 TDI CR LK AT '],
+    ['Tata','Tata ALTROZ','XE 1.2 '],
+    ['Tata','Tata ALTROZ','XZ 1.2 '],
+    ['Tata','Tata Harrier','XZ 2.0L Kryotec '],
+    ['Tata','Tata Harrier','XZA + DUAL TONE '],
+    ['Tata','Tata Harrier','XM 2.0L Kryotec '],
+    ['Tata','Tata Hexa','Varicor 400 XT '],
+    ['Tata','Tata Hexa','Varicor 400 XTA '],
+    ['Tata','Tata Hexa','Varicor 320 XE '],
+    ['Tata','Tata Manza','URA ABS QUADRAJET BS IV '],
+    ['Tata','Tata Nano','XT TWIST '],
+    ['Tata','Tata Nano','TWIST XTA '],
+    ['Tata','Tata NEXON','XZ+ 1.2 '],
+    ['Tata','Tata NEXON','XZ 1.2 '],
+    ['Tata','Tata NEXON','XZA+ 1.5 '],
+    ['Tata','Tata NEXON','KRAZ 1.2 '],
+    ['Tata','Tata NEXON','XZA + 1.2 PETROL A/T '],
+    ['Tata','Tata NEXON','XM 1.5 '],
+    ['Tata','Tata NEXON','XM 1.2 '],
+    ['Tata','Tata NEXON','XZ+ 1.5 '],
+    ['Tata','Tata NEXON','XMA 1.5 '],
+    ['Tata','Tata Safari Storme','2.2 VX 4X2 '],
+    ['Tata','Tata Tiago','XZA 1.2 REVOTRON '],
+    ['Tata','Tata Tiago','XZ 1.2 REVOTRON '],
+    ['Tata','Tata Tiago','XZ 1.05 REVOTORQ '],
+    ['Tata','Tata Tiago','XZ+ 1.2 Revotron '],
+    ['Tata','Tata Tiago','XT 1.2 REVOTRON '],
+    ['Tata','Tata Tiago','XE 1.2 REVOTRON '],
+    ['Tata','Tata Tiago','XT 1.05 REVOTORQ '],
+    ['Tata','Tata TIGOR','XZ PLUS 1.2 REVOTRON '],
+    ['Tata','Tata TIGOR','XT  REVOTORQ '],
+    ['Tata','Tata TIGOR','Revotorq XZ (O) '],
+    ['Tata','Tata Zest','XMS RT '],
+    ['Toyota','Toyota Corolla Altis','1.8 GL '],
+    ['Toyota','Toyota Corolla Altis','D 4D G '],
+    ['Toyota','Toyota Corolla Altis','1.8 G '],
+    ['Toyota','Toyota Corolla Altis','D 4D J '],
+    ['Toyota','Toyota Corolla Altis','VL AT '],
+    ['Toyota','Toyota Corolla Altis','J S '],
+    ['Toyota','Toyota Corolla Altis','G '],
+    ['Toyota','Toyota Etios','V '],
+    ['Toyota','Toyota Etios','VX D '],
+    ['Toyota','Toyota Etios','CROSS 1.4 GD '],
+    ['Toyota','Toyota Etios','CROSS  VD '],
+    ['Toyota','Toyota Etios','VD 1.4 '],
+    ['Toyota','Toyota Etios','G SP '],
+    ['Toyota','Toyota Etios Liva','D 4D GD '],
+    ['Toyota','Toyota Etios Liva','G '],
+    ['Toyota','Toyota Etios Liva','GD '],
+    ['Toyota','Toyota Etios Liva','GD exclusive '],
+    ['Toyota','Toyota Etios Liva','D 4D VD '],
+    ['Toyota','Toyota Etios Liva','VX '],
+    ['Toyota','Toyota Etios Liva','D-4D VXD '],
+    ['Toyota','Toyota Etios Liva','GD SP '],
+    ['Toyota','Toyota Fortuner','3.0 MT 4X4 '],
+    ['Toyota','Toyota Fortuner','3.0 AT 4X2 '],
+    ['Toyota','Toyota Fortuner','3.0 MT 4X2 '],
+    ['Toyota','Toyota Fortuner','SPORTIVO 4X2 MT '],
+    ['Toyota','Toyota Glanza','G MT PETROL '],
+    ['Toyota','Toyota Glanza','G CVT '],
+    ['Toyota','Toyota Glanza','V CVT '],
+    ['Toyota','Toyota Innova','2.5 VX 8 STR BS IV '],
+    ['Toyota','Toyota Innova','2.5 ZX 7 STR BS IV '],
+    ['Toyota','Toyota Innova','2.5 V 8 STR '],
+    ['Toyota','Toyota Innova','2.5 VX 7 STR BS IV '],
+    ['Toyota','Toyota Innova','2.5 GX 7 STR BS IV '],
+    ['Toyota','Toyota Innova','2.5 GX 8 STR BS IV '],
+    ['Toyota','Toyota Innova','2.5 G4 8 STR '],
+    ['Toyota','Toyota Innova Crysta','2.8 ZX AT 7 STR '],
+    ['Toyota','Toyota Innova Crysta','2.7 ZX AT 7 STR '],
+    ['Toyota','Toyota Innova Crysta','2.4 ZX 7 STR '],
+    ['Toyota','Toyota Innova Crysta','Touring Sport Diesel AT '],
+    ['Toyota','Toyota Innova Crysta','2.8 GX AT 7 STR '],
+    ['Toyota','Toyota Innova Crysta','2.4 VX 7 STR '],
+    ['Toyota','Toyota Innova Crysta','2.7 GX 7 STR MT '],
+    ['Toyota','Toyota YARIS','V MT '],
+    ['Toyota','Toyota YARIS','V CVT '],
+    ['Toyota','Toyota YARIS','VX CVT '],
+    ['Toyota','Toyota YARIS','G MT '],
+    ['Volkswagen','Volkswagen Ameo','HIGHLINE 1.2 '],
+    ['Volkswagen','Volkswagen Ameo','HIGHLINE 1.5 '],
+    ['Volkswagen','Volkswagen Ameo','HIGHLINE 1.5L AT (D) '],
+    ['Volkswagen','Volkswagen Ameo','COMFORTLINE 1.2 '],
+    ['Volkswagen','Volkswagen Ameo','TRENDLINE 1.2 '],
+    ['Volkswagen','Volkswagen Ameo','COMFORTLINE 1.0 '],
+    ['Volkswagen','Volkswagen Ameo','HIGHLINE DSG 1.5 '],
+    ['Volkswagen','Volkswagen Jetta','HIGHLINE TDI AT '],
+    ['Volkswagen','Volkswagen Polo','Trendline 1.0 L Petrol '],
+    ['Volkswagen','Volkswagen Polo','HIGHLINE1.2L PETROL '],
+    ['Volkswagen','Volkswagen Polo','HIGHLINE1.5L DIESEL '],
+    ['Volkswagen','Volkswagen Polo','COMFORTLINE 1.2L PETROL '],
+    ['Volkswagen','Volkswagen Polo','GT TSI 1.2 PETROL AT '],
+    ['Volkswagen','Volkswagen Polo','COMFORTLINE 1.0 PETROL '],
+    ['Volkswagen','Volkswagen Polo','TRENDLINE 1.5L DIESEL '],
+    ['Volkswagen','Volkswagen Polo','TRENDLINE 1.2L PETROL '],
+    ['Volkswagen','Volkswagen Polo','COMFORTLINE 1.2L DIESEL '],
+    ['Volkswagen','Volkswagen Polo','GTI TSI AT '],
+    ['Volkswagen','Volkswagen Polo','HIGHLINE PLUS 1.2L PETROL '],
+    ['Volkswagen','Volkswagen Polo','GT TSI AT 1.0 '],
+    ['Volkswagen','Volkswagen TIGUAN','HIGHLINE A/T '],
+    ['Volkswagen','Volkswagen Vento','HIGHLINE PLUS TDI MT '],
+    ['Volkswagen','Volkswagen Vento','HIGHLINE PLUS 1.0 TSI AT '],
+    ['Volkswagen','Volkswagen Vento','HIGHLINE PETROL '],
+    ['Volkswagen','Volkswagen Vento','HIGHLINE TDI AT '],
+    ['Volkswagen','Volkswagen Vento','1.2 TSI HIGHLINE PLUS AT '],
+    ['Volkswagen','Volkswagen Vento','HIGHLINE 1.2 TSI AT '],
+    ['Volkswagen','Volkswagen Vento','HIGHLINE DIESEL '],
+    ['Volkswagen','Volkswagen Vento','COMFORTLINE PETROL ']];
+    citystate=[['Telangana','Hyderabad'],['Gujarat','Ahmedabad'],['Karnataka','Bengaluru'],['Tamilnadu','Chennai'],['Tamilnadu','Coimbatore'],['Haryana','Gurgaon'],['Rajasthan','Jaipur'],['West Bengal','Kolkata'],['Maharashtra','Mumbai'],['Maharashtra','Pune']];
+  </script>
+
+  <script lang="javascript">
+    var brands=[];
+    var models=[];
+    var prevval='';
+    var arr=[];
+    var cities=[];
+    var states=[];
+    brandmodel.forEach(element => {
+      val=element[1];
+      if (val!=prevval){
+        if (arr.length>0){
+          brands.push(prevval);
+          models.push([prevval,arr]);
+        }
+        prevval=val;
+        arr=[];
+      }
+      arr.push(element[2]);
+    });
+
+    var $el = $("#brand");
+    $el.empty();
+    $.each(brands, function(item, index) {
+    $el.append($("<option></option>").attr("value", index).text(index.replace('_',' ').toUpperCase()));
+    });
+
+    arr=[];
+    prevval='';
+    citystate.forEach(element => {
+      val=element[0];
+      if (val!=prevval){
+        if (arr.length>0){
+          states.push(prevval);
+          cities.push([prevval,arr]);
+        }
+        prevval=val;
+        arr=[];
+      }
+      arr.push(element[1]);
+    });
+
+    var $el = $("#statename");
+    $el.empty();
+    $.each(states, function(item, index) {
+    $el.append($("<option></option>").attr("value", index).text(index.replace('_',' ').toUpperCase()));
+    });
+
+    $(function(){
+
+      $('button#btnpredict').click(function(){
+        $.ajax({
+          type: 'POST',
+          url: '/predict',
+          data: $('form#frmPredict').serialize(),
+          success: function(msg){$('#result').empty().append(msg.result);},
+          error: function() {alert('failure');}
+        });
+      });
+
+      $('select#brand').change(function(){
+        let brandlogo=$('#brand').val();
+        brandlogo=brandlogo.substr(0, brandlogo.indexOf(' '));
+        $('#logo').attr("src","/static/logos/"+brandlogo+".png");
+        models.forEach(element => {
+        if ($('#brand').val()==element[0]){
+          var $el = $("#modeltype");
+          $el.empty();
+          $.each(element[1], function(item, index) {
+            $el.append($("<option></option>").attr("value", index).text(index.toUpperCase()));
+          });
+        }
+        });
+      });
+
+      $('select#statename').change(function(){
+        cities.forEach(element => {
+        if ($('#statename').val()==element[0]){
+          var $el = $("#cityname");
+          $el.empty();
+          $.each(element[1], function(item, index) {
+            $el.append($("<option></option>").attr("value", index).text(index.toUpperCase()));
+          });
+        }
+        });
+      });  
+
+      $('a#btnsend').click(function(){
+        $.ajax({
+          type: 'POST',
+          url: '/feedback',
+          data: $('form#frmfeedback').serialize(),
+          success: function(msg){$('#result').empty().append(msg.result);},
+          error: function() {alert('failure');}
+        });
+      });
+
+    });
+  </script>
+  {% endblock %}
+</div>

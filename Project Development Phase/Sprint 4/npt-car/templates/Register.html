@@ -1,0 +1,125 @@
+{% extends "bootstrap/base.html" %}
+<link rel="icon" type="image/x-icon" href="{{url_for('.static', filename='img/favicon.ico')}}">
+{% block title %}
+Register New User of Resale Value App
+{% endblock %}
+
+{% block styles %}
+{{super()}}
+<link rel="stylesheet" href="{{url_for('.static', filename='dashboard.css')}}">
+<link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+{% endblock %}
+
+{% block content %}
+  <nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="{{ url_for('index') }}">Car Resale Value Calculator</a>
+      </div>
+      <div id="navbar" class="navbar-collapse collapse">
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="{{ url_for('register') }}">Register New User</a></li>
+          <li><a href="{{ url_for('login') }}">Login</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <div class="container-fluid center" style="padding-top: 50px;">
+    <div class="row center">
+      <div class="row center">
+        <div class="col-sm-3 col-sm-offset-2 col-md-3 col-md-offset-2 center" style="background-color: #50fcc8;">
+          <div class="card shadow-2-strong" style="border-radius: 1rem;">
+            <div class="card-body p-5 text-center">
+              <br>
+                        <h2 class="text-uppercase text-center mb-5">Register A New User</h2>      
+                  
+                        <form id="frmregister" name="frmregister" class="user">
+      
+                          <div class="form-outline mb-4">
+                            <input type="text" id="username" name="username" class="form-control form-control-lg" />
+                            <label class="form-label" for="username" style="margin-left: 0px;">Your Name</label>
+                          <div class="form-notch"><div class="form-notch-leading" style="width: 9px;"></div><div class="form-notch-middle" style="width: 71.2px;"></div><div class="form-notch-trailing"></div></div></div>
+      
+                          <div class="form-outline mb-4">
+                            <input type="email" id="email" name="email" class="form-control form-control-lg" />
+                            <label class="form-label" for="email" style="margin-left: 0px;">Your Email</label>
+                          <div class="form-notch"><div class="form-notch-leading" style="width: 9px;"></div><div class="form-notch-middle" style="width: 68.8px;"></div><div class="form-notch-trailing"></div></div></div>
+      
+                          <div class="form-outline mb-4">
+                            <input type="password" id="userpassword" name="userpassword" class="form-control form-control-lg" />
+                            <label class="form-label" for="userpassword" style="margin-left: 0px;">Password</label>
+                          <div class="form-notch"><div class="form-notch-leading" style="width: 9px;"></div><div class="form-notch-middle" style="width: 64px;"></div><div class="form-notch-trailing"></div></div></div>
+      
+                          <div class="form-outline mb-4">
+                            <input type="password" id="userpassword1" name="userpassword1" class="form-control form-control-lg" />
+                            <label class="form-label" for="userpassword1" style="margin-left: 0px;">Repeat your password</label>
+                          <div class="form-notch"><div class="form-notch-leading" style="width: 9px;"></div><div class="form-notch-middle" style="width: 134.4px;"></div><div class="form-notch-trailing"></div></div></div>
+      
+                          <div class="form-check d-flex justify-content-center mb-5">
+                            <input class="form-check-input me-2 align-items-left" type="checkbox" value="" id="terms" name="terms" />
+                            <label class="form-check-label" for="terms">
+                              I agree all statements in <a href="/register" class="text-body"><u>Terms of service</u></a>
+                            </label>
+                          </div>
+      
+                          <div class="d-flex justify-content-center">
+                            <button type="button" id="btnRegister" name="btnRegister" class="btn btn-success btn-block btn-lg">Register</button>
+                          </div>
+      
+                          <p class="text-center text-muted mt-5 mb-0">Have already an account? <a href="/login" class="fw-bold text-body"><u>Login here</u></a></p>
+      
+                        </form>      
+                        <div class="h5 mb-0 font-weight-bold text-gray-800"><h2 id="result" name="result">{{ypred}}</h2></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+    <!-- Your page content Ends Here-->
+
+    <script src="{{url_for('.static', filename='js/jquery.min.js')}}"></script>
+    <script src="{{url_for('.static', filename='js/bootstrap.bundle.min.js')}}"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="{{url_for('.static', filename='js/jquery.easing.min.js')}}"></script>
+      
+    <!-- Custom scripts for all pages-->    
+    <script src="https://apis.google.com/js/platform.js" async defer></script>  
+       
+    <script lang="javascript">
+       
+      $(function(){
+
+        $('button#btnRegister').click(function(){
+          console.log($('form#frmregister').serialize());
+          $.ajax({
+            type: 'POST',
+            url: '/registeruser',
+            data: $('form#frmregister').serialize(),
+            success: function(msg){
+              $('#result').empty().append(msg.result);
+              if (msg.result=="New User Registered")
+                window.location.href = "/login";
+              },
+            error: function() {alert('Login Failed');}
+          });
+        }); 
+      });
+       
+    </script>
+{% endblock %} 
